@@ -1,12 +1,12 @@
 import streamlit as st
 from googleapiclient.discovery import build
-from dotenv import load_dotenv
+import streamlit as st
 from datetime import datetime, timedelta, timezone
 import os
 
 # Load API Key
 load_dotenv()
-API_KEY = os.getenv("YOUTUBE_API_KEY")
+API_KEY = st.secrets("YOUTUBE_API_KEY")
 youtube = build("youtube", "v3", developerKey=API_KEY)
 
 # === Core Functions ===
