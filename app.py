@@ -3,6 +3,8 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from datetime import datetime, timedelta, timezone
 
+st.set_page_config(page_title="Underdog YouTube Finder", layout="wide")
+
 # === YouTube API Client Setup with Fallback ===
 def create_youtube_client(api_key):
     return build("youtube", "v3", developerKey=api_key)
@@ -87,7 +89,7 @@ def get_channel_subs_bulk(channel_ids):
     return subs
 
 # === Streamlit UI ===
-st.set_page_config(page_title="Underdog YouTube Finder", layout="wide")
+
 st.title("🎯 Underdog YouTube Video Finder")
 
 with st.sidebar:
