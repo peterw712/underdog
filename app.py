@@ -1,12 +1,39 @@
 import streamlit as st
 from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 from datetime import datetime, timedelta, timezone
-import os
 
-# Load API key from Streamlit secrets
-API_KEY = st.secrets["YOUTUBE_API_KEY"]
-youtube = build("youtube", "v3", developerKey=API_KEY)
+# === YouTube API Client Setup with Fallback ===
+def create_youtube_client(api_key):
+    return build("youtube", "v3", developerKey=api_key)
 
+def get_youtube_client():
+    try:
+        API_KEY = st.secrets["PRIMARY_API_KEY"]
+        youtube = create_youtube_client(API_KEY)
+        # Test call to trigger quota error
+        youtube.search().list(
+            q="test",
+            part="snippet",
+            type="video",
+            maxResults=1
+        ).execute()
+        return youtube
+    except HttpError as e:
+        if "quotaExceeded" in str(e):
+            st.warning("⚠️ Primary API quota exceeded. Switching to backup key.")
+            try:
+                API_KEY = st.secrets["SECONDARY_API_KEY"]
+                return create_youtube_client(API_KEY)
+            except Exception as e2:
+                st.error("❌ Both API keys failed. Please check quota or keys.")
+                st.stop()
+        else:
+            st.error("❌ YouTube API error.")
+            st.exception(e)
+            st.stop()
+
+youtube = get_youtube_client()
 
 # === Core Functions ===
 def get_published_after(days_ago):
