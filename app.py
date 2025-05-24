@@ -1,13 +1,12 @@
 import streamlit as st
 from googleapiclient.discovery import build
-import streamlit as st
 from datetime import datetime, timedelta, timezone
 import os
 
-# Load API Key
-load_dotenv()
-API_KEY = st.secrets("YOUTUBE_API_KEY")
+# Load API key from Streamlit secrets
+API_KEY = st.secrets["YOUTUBE_API_KEY"]
 youtube = build("youtube", "v3", developerKey=API_KEY)
+
 
 # === Core Functions ===
 def get_published_after(days_ago):
